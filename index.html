@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESYBOT - Упрощённое создание Telegram ботов</title>
+    <meta name="description" content="ESYBOT - революционный язык для создания мощных Telegram ботов с интуитивным синтаксисом и Python интеграцией">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+    
+    <!-- Highlight.js для подсветки кода -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #00d4ff;
+            --primary-dark: #0099cc;
+            --secondary-color: #ff6b6b;
+            --accent: #4ecdc4;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --background: #0a0e1a;
+            --surface: #161b29;
+            --surface-light: #1e2535;
+            --surface-hover: #252b3d;
+            --text-primary: #ffffff;
+            --text-secondary: #b8c5d6;
+            --text-muted: #7a8ba0;
+            --border: #2d3748;
+            --border-light: #4a5568;
+            --gradient-primary: linear-gradient(135deg, #00d4ff, #4ecdc4);
+            --gradient-secondary: linear-gradient(135deg, #ff6b6b, #ffa726);
+            --gradient-bg: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 100%);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 12px 48px rgba(0, 212, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Навигация */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.3));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Кнопки */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-secondary {
+            background: var(--surface-light);
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-hover);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-github {
+            background: #24292e;
+            color: white;
+        }
+
+        .btn-github:hover {
+            background: #2f363d;
+            transform: translateY(-2px);
+        }
+
+        /* Главная секция */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(0, 212, 255, 0.1), transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(78, 205, 196, 0.1), transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(255, 107, 107, 0.05), transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.3)); }
+            to { filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.6)); }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.25rem, 3vw, 2rem);
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 3rem auto;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+        }
+
+        /* Статистики */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--surface);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        /* Возможности */
+        .features {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.3));
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .feature-tag {
+            background: var(--surface-light);
+            color: var(--text-muted);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+        }
+
+        /* Пример кода */
+        .code-example {
+            padding: 6rem 2rem;
+            background: var(--surface);
+            position: relative;
+        }
+
+        .code-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .code-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .copy-btn {
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--surface-hover);
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        pre {
+            background: var(--background) !important;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 0;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            box-shadow: var(--shadow);
+        }
+
+        /* CTA секция */
+        .cta {
+            padding: 6rem 2rem;
+            text-align: center;
+            background: var(--surface);
+            position: relative;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(0, 212, 255, 0.05), transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .cta-description {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Футер */
+        .footer {
+            background: var(--background);
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-card {
+                padding: 2rem;
+            }
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Анимации */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        .feature-card:nth-child(4) { animation-delay: 0.4s; }
+        .feature-card:nth-child(5) { animation-delay: 0.5s; }
+        .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Скролл */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--background);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--surface-light);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border-light);
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span class="logo-icon">🤖</span>
+                <span>ESYBOT</span>
+            </a>
+            <div class="nav-links">
+                <a href="https://esybotscript.github.io/wiki/" class="nav-link" target="_blank">📚 Документация</a>
+                <a href="https://github.com/esybotscript/esybot" class="nav-link" target="_blank">🔧 GitHub</a>
+                <a href="#features" class="nav-link">✨ Возможности</a>
+                <a href="#example" class="nav-link">💡 Пример</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Главная секция -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">ESYBOT</h1>
+            <p class="hero-subtitle">Революционный язык для создания Telegram ботов</p>
+            <p class="hero-description">
+                Создавайте мощных Telegram ботов с интуитивным синтаксисом, полной поддержкой Python 
+                и всех возможностей aiogram 3.x. Никакой сложности — только результат!
+            </p>
+            
+            <div class="hero-buttons">
+                <a href="https://esybotscript.github.io/wiki/" class="btn btn-primary" target="_blank">
+                    🚀 Начать сейчас
+                </a>
+                <a href="https://github.com/esybotscript/esybot" class="btn btn-github" target="_blank">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+                <a href="#example" class="btn btn-secondary">
+                    📖 Посмотреть пример
+                </a>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number">5мин</span>
+                    <div class="stat-label">До первого бота</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100%</span>
+                    <div class="stat-label">aiogram совместимость</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">0</span>
+                    <div class="stat-label">Сложной настройки</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Возможности -->
+    <section class="features" id="features">
+        <h2 class="section-title">Невероятные возможности</h2>
+        <p class="section-subtitle">
+            ESYBOT объединяет простоту использования с мощью профессиональных инструментов
+        </p>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🎯</span>
+                <h3 class="feature-title">Интуитивный синтаксис</h3>
+                <p class="feature-description">
+                    Забудьте о сложном коде! Простые команды на понятном языке позволяют создавать ботов 
+                    за минуты, а не часы.
+                </p>
+                <div class="feature-tags">
+                    <span class="feature-tag">Быстро</span>
+                    <span class="feature-tag">Понятно</span>
+                    <span class="feature-tag">Эффективно</span>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🐍</span>
+                <h3 class="feature-title">Python интеграция</h3>
+                <p class="feature-description">
+                    Полная поддержка Python кода внутри скриптов. Используйте любые библиотеки, 
+                    API и вычисления прямо в боте.
+                </p>
+                <div class="feature-tags">
+                    <span class="feature-tag">Гибкость</span>
+                    <span class="feature-tag">Мощность</span>
+                    <span class="feature-tag">Библиотеки</span>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <h3 class="feature-title">aiogram 3.x поддержка</h3>
+                <p class="feature-description">
+                    Все возможности современного aiogram доступны из коробки: состояния, фильтры, 
+                    middleware и многое другое.
+                </p>
+                <div class="feature-tags">
+                    <span class="feature-tag">Современно</span>
+                    <span class="feature-tag">Полнота</span>
+                    <span class="feature-tag">Актуально</span>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🎨</span>
+                <h3 class="feature-title">Красивые интерфейсы</h3>
+                <p class="feature-description">
+                    Создавайте потрясающие клавиатуры, меню и интерактивные элементы с помощью 
+                    простых команд.
+                </p>
+                <div class="feature-tags">
+                    <span class="feature-tag">UI/UX</span>
+                    <span class="feature-tag">Клавиатуры</span>
+                    <span class="feature-tag">Меню</span>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🔄</span>
+                <h3 class="feature-title">Состояния (FSM)</h3>
+                <p class="feature-description">
+                    Создавайте сложные диалоги и процессы с помощью встроенной поддержки 
+                    машины состояний.
+                </p>
+                <div class="feature-tags">
+                    <span class="feature-tag">Диалоги</span>
+                    <span class="feature-tag">Логика</span>
+                    <span class="feature-tag">Процессы</span>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">📁</span>
+                <h3 class="feature-title">Медиа и файлы</h3>
+                <p class="feature-description">
+                    Обрабатывайте фото, видео, документы и другие файлы с минимальным количеством кода.
+                    Полная поддержка всех типов контента.
+                </p>
+                <div class="feature-tags">
+                    <span class="feature-tag">Фото</span>
+                    <span class="feature-tag">Видео</span>
+                    <span class="feature-tag">Документы</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Пример кода -->
+    <section class="code-example" id="example">
+        <div class="code-container">
+            <div class="code-header">
+                <h2 class="code-title">🚀 Создайте бота за 2 минуты</h2>
+                <button class="copy-btn" onclick="copyCode()">📋 Копировать</button>
+            </div>
+            
+            <pre><code class="language-esybot"># Мой первый ESYBOT бот
+bot_token "YOUR_BOT_TOKEN"
+
+# Переменные
+set user_count 0
+set welcome_msg "🤖 Добро пожаловать в ESYBOT!"
+
+# Главное меню
+menu main_menu {
+    button "📊 Статистика" stats_btn
+    button "🎲 Случайное число" random_btn
+    button "💡 О боте" about_btn new_row=true
+}
+
+# Обработчик команды /start
+on_start {
+    increment user_count
+    send $welcome_msg
+    send "Выберите действие:" keyboard=main_menu
+}
+
+# Python интеграция
+on_callback random_btn {
+    python {
+        import random
+        number = random.randint(1, 100)
+        esybot_set('random_number', number)
+        
+        # Можно использовать любые библиотеки!
+        import datetime
+        time_now = datetime.datetime.now().strftime("%H:%M")
+        esybot_set('current_time', time_now)
+    }
+    
+    edit "🎲 Ваше число: $random_number\n🕐 Время: $current_time"
+    answer_callback "Новое число сгенерировано!"
+}
+
+# Обработка фото с анализом
+on_photo {
+    python {
+        # Анализ фото (пример)
+        photo_count = len(esybot_get('photo', []))
+        analysis = f"Получено {photo_count} размеров фото"
+        esybot_set('photo_analysis', analysis)
+    }
+    
+    reply "📸 Отличное фото! $photo_analysis"
+}
+
+# Обработчик статистики
+on_callback stats_btn {
+    edit "📊 **Статистика бота**\n\n👥 Пользователей: $user_count" parse_mode="Markdown"
+}</code></pre>
+        </div>
+    </section>
+
+    <!-- CTA секция -->
+    <section class="cta">
+        <div class="cta-content">
+            <h2 class="cta-title">Готовы создать своего бота?</h2>
+            <p class="cta-description">
+                Начните прямо сейчас! Полная документация, примеры и поддержка сообщества 
+                помогут вам создать бота мечты.
+            </p>
+            <div class="cta-buttons">
+                <a href="https://esybotscript.github.io/wiki/" class="btn btn-primary" target="_blank">
+                    📚 Открыть документацию
+                </a>
+                <a href="https://github.com/esybotscript/esybot" class="btn btn-secondary" target="_blank">
+                    💾 Скачать ESYBOT
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="https://esybotscript.github.io/wiki/" class="footer-link" target="_blank">Документация</a>
+                <a href="https://github.com/esybotscript/esybot" class="footer-link" target="_blank">GitHub</a>
+                <a href="https://github.com/esybotscript/esybot/issues" class="footer-link" target="_blank">Поддержка</a>
+                <a href="https://github.com/esybotscript/esybot/blob/main/LICENSE" class="footer-link" target="_blank">Лицензия</a>
+            </div>
+            <p class="footer-text">
+                © 2025 ESYBOT. Сделано с ❤️ для сообщества разработчиков.<br>
+                Проект распространяется под лицензией GPL-3.0
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Подсветка синтаксиса
+        hljs.highlightAll();
+
+        // Плавная прокрутка для якорных ссылок
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Функция копирования кода
+        function copyCode() {
+            const codeBlock = document.querySelector('pre code');
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Скопировано!';
+                btn.style.background = 'var(--success)';
+                btn.style.color = 'white';
+                btn.style.borderColor = 'var(--success)';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                    btn.style.borderColor = '';
+                }, 2000);
+            }).catch(() => {
+                alert('Не удалось скопировать код. Попробуйте выделить и скопировать вручную.');
+            });
+        }
+
+        // Эффект параллакса для hero секции
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            const rate = scrolled * -0.5;
+            hero.style.transform = `translateY(${rate}px)`;
+        });
+
+        // Анимация появления элементов при скролле
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Наблюдаем за элементами
+        document.querySelectorAll('.feature-card, .stat-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Анимация счетчиков
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            counters.forEach(counter => {
+                const target = counter.textContent;
+                const isNumber = !isNaN(parseInt(target));
+                
+                if (isNumber) {
+                    const targetNum = parseInt(target);
+                    let current = 0;
+                    const increment = targetNum / 50;
+                    
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= targetNum) {
+                            counter.textContent = target;
+                            clearInterval(timer);
+                        } else {
+                            counter.textContent = Math.floor(current).toString();
+                        }
+                    }, 50);
+                }
+            });
+        }
+
+        // Запускаем анимацию счетчиков при появлении статистики
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        });
+
+        const statsSection = document.querySelector('.stats');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+
+        // Добавляем интерактивность к карточкам функций
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-12px) rotateX(5deg)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(-8px) rotateX(0deg)';
+            });
+        });
+
+        // Эффект печатания для заголовка
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.textContent = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Запускаем эффект печатания при загрузке
+        window.addEventListener('load', () => {
+            const heroTitle = document.querySelector('.hero-title');
+            if (heroTitle) {
+                const originalText = heroTitle.textContent;
+                typeWriter(heroTitle, originalText, 150);
+            }
+        });
+    </script>
+</body>
+</html>
